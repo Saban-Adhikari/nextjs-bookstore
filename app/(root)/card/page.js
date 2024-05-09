@@ -2,11 +2,15 @@
 import Link from "next/link";
 import Categories from "./categories";
 import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 
 const Page = () => {
   const [books, setBooks] = useState([]);
   const [selectedGenre, setSelectedGenre] = useState(-1);
   const [selectedStatus, setSelectedStatus] = useState(-1);
+  const { data: session, status } = useSession();
+
+  console.log("heres data ", session);
 
   const fetchData = async (genre, status) => {
     try {

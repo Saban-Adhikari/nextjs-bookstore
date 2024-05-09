@@ -1,9 +1,8 @@
 import { Inter } from "next/font/google";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
 import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
+import { SessionProvider } from "next-auth/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -12,15 +11,13 @@ export const metadata = {
   description: "Your online book haven",
 };
 
-export default function RootLayout({ children }) {
+export default function Layout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Navbar />
-        {children}
-        <SpeedInsights />
-        <Analytics />
-        <Footer />
+        <>
+          <SessionProvider>{children}</SessionProvider>
+        </>
       </body>
     </html>
   );

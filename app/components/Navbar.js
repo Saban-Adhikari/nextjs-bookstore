@@ -28,16 +28,16 @@ const Navbar = () => {
                 Home
               </Link>
               <Link
-                href="#books"
+                href="/login"
                 className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
               >
-                Books
+                Login
               </Link>
               <Link
                 href="#"
                 className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
               >
-                New
+                Logout
               </Link>
             </div>
           </div>
