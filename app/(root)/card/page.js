@@ -8,9 +8,10 @@ const Page = () => {
   const [books, setBooks] = useState([]);
   const [selectedGenre, setSelectedGenre] = useState(-1);
   const [selectedStatus, setSelectedStatus] = useState(-1);
-  const { data: session, status } = useSession();
 
-  console.log("heres data ", session);
+  const { status } = useSession();
+
+  console.log(status);
 
   const fetchData = async (genre, status) => {
     try {

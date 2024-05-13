@@ -17,30 +17,21 @@ export const authOptions = {
             Email: credentials?.Email,
             Password: credentials?.Password,
           };
-          const res = await fetch(`https://htdrnl.cyclic.app/api/login`, {
+          const res = await fetch(`https://htdrnl.cyclic.app/api/appLogin`, {
             method: "POST",
             body: JSON.stringify(requestBody),
             headers: { "Content-Type": "application/json" },
           });
-
+          console.log("res", res.ok);
           if (!res.ok) {
             const errorResponse = await res.json();
-            console.error("Authentication error:", errorResponse);
+            console.error("Authentication error:", errorResponse.Message);
             return null;
           }
 
-          const responseData = await res.json();
-
-          console.log("response data", responseData);
-          if (
-            responseData.error &&
-            responseData.error.message === "Invalid username or password"
-          ) {
-            return null;
-          }
-          console.log("Login successful", responseData);
-          // cookies().set("ok_reg_user", responseData.data.token);
-          return { ...responseData };
+          const userData = await res.json();
+          console.log("Login successful:", userData);
+          return userData; // Return user data if authentication succeeds
         } catch (error) {
           console.error("Authentication error:", error);
           return null;
@@ -48,12 +39,15 @@ export const authOptions = {
       },
     }),
   ],
-  pages: {
-    signIn: "/login",
-  },
+  pages: {},
   callbacks: {
-    async session({ session, token, user }) {
-      return { ...session, ...token, ...user };
+    async jwt({ token, user }) {
+      return { ...token, ...user };
+    },
+    async session({ session, token }) {
+      session.user = token;
+      return session;
     },
   },
+  secret: process.env.JWT_SECRET,
 };

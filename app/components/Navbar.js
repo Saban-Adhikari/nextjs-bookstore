@@ -2,13 +2,17 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { status } = useSession();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
+
+  console.log(status);
 
   return (
     <nav className="bg-gray-800">
@@ -28,17 +32,26 @@ const Navbar = () => {
                 Home
               </Link>
               <Link
-                href="/login"
+                href="/api/register"
                 className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
               >
-                Login
+                Register
               </Link>
-              <Link
-                href="#"
-                className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Logout
-              </Link>
+              {status == "authenitcated" ? (
+                <Link
+                  href="/api/logout"
+                  className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  Logout
+                </Link>
+              ) : (
+                <Link
+                  href="/api/login"
+                  className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  Login
+                </Link>
+              )}
             </div>
           </div>
           <div className="-mr-2 flex md:hidden">

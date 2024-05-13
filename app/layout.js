@@ -1,8 +1,8 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Analytics } from "@vercel/analytics/react";
-import { SessionProvider } from "next-auth/react";
+// import { SpeedInsights } from "@vercel/speed-insights/next";
+// import { Analytics } from "@vercel/analytics/react";
+import { AuthProvider } from "./Providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,11 +14,9 @@ export const metadata = {
 export default function Layout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <>
-          <SessionProvider>{children}</SessionProvider>
-        </>
-      </body>
+      <AuthProvider>
+        <body className={inter.className}>{children}</body>
+      </AuthProvider>
     </html>
   );
 }
