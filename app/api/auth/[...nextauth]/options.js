@@ -8,16 +8,16 @@ export const authOptions = {
     CredentialsProvider({
       type: "credentials",
       credentials: {
-        Email: { label: "Email", type: "text", placeholder: "Email" },
-        Password: { label: "Password", type: "password" },
+        username: { label: "Email", type: "text", placeholder: "Email" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
         try {
           const requestBody = {
-            Email: credentials?.Email,
-            Password: credentials?.Password,
+            username: credentials?.username,
+            password: credentials?.password,
           };
-          const res = await fetch(`https://htdrnl.cyclic.app/api/appLogin`, {
+          const res = await fetch(`https://dummyjson.com/auth/login`, {
             method: "POST",
             body: JSON.stringify(requestBody),
             headers: { "Content-Type": "application/json" },
@@ -49,5 +49,5 @@ export const authOptions = {
       return session;
     },
   },
-  secret: process.env.JWT_SECRET,
+  secret: process.env.AUTH_SECRET,
 };

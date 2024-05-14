@@ -1,10 +1,11 @@
+"use client";
 import React from "react";
 import { signOut } from "next-auth/react";
 
 const LogoutPage = () => {
-  // const handleLogout = () => {
-  //   signOut({ callbackUrl: '/' }); // Replace '/' with the desired redirect URL after logout
-  // };
+  const handleLogout = () => {
+    signOut({ callbackUrl: "/" }); // Replace '/' with the desired redirect URL after logout
+  };
 
   return (
     <section className="bg-gray-50">
@@ -20,7 +21,7 @@ const LogoutPage = () => {
               </p>
               <div className="flex items-center justify-between">
                 <button
-                  // onClick={handleLogout}
+                  onClick={handleLogout}
                   className="w-full bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center text-white dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
                 >
                   Log out

@@ -2,55 +2,70 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { status } = useSession();
+  const { data: Session, status } = useSession();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
 
-  console.log(status);
+  console.log(status, "session: ", Session);
 
   return (
     <nav className="bg-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-20 ">
           <div className="flex-shrink-0">
             <Link href="/card">
               <Image src="/book.png" width={80} height={50} alt="Logo" />
             </Link>
           </div>
           <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-4">
+            <div className="ml-10  w-full flex items-center justify-evenly space-x-4 ">
               <Link
                 href="/card"
                 className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
               >
                 Home
               </Link>
-              <Link
-                href="/api/register"
-                className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Register
-              </Link>
-              {status == "authenitcated" ? (
-                <Link
-                  href="/api/logout"
-                  className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  Logout
-                </Link>
+              {status && status == "authenticated" ? (
+                <>
+                  <button
+                    onClick={() => signOut()}
+                    className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                  >
+                    Logout
+                  </button>
+                  {status && status == "authenticated" ? (
+                    <img
+                      className="bg-white rounded-full"
+                      src={Session?.user?.image}
+                      alt="profile"
+                      height={30}
+                      width={30}
+                    />
+                  ) : (
+                    ""
+                  )}
+                </>
               ) : (
-                <Link
-                  href="/api/login"
-                  className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  Login
-                </Link>
+                <>
+                  <Link
+                    href="/api/register"
+                    className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                  >
+                    Register
+                  </Link>
+                  <Link
+                    href="/api/login"
+                    className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                  >
+                    Login
+                  </Link>
+                </>
               )}
             </div>
           </div>
@@ -109,18 +124,31 @@ const Navbar = () => {
           >
             Home
           </Link>
-          <Link
-            href="#"
-            className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-          >
-            Books
-          </Link>
-          <Link
-            href="#"
-            className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-          >
-            New
-          </Link>
+          {status && status == "authenticated" ? (
+            <>
+              <Link
+                href="/api/logout"
+                className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+              >
+                Logout
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/api/register"
+                className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+              >
+                Register
+              </Link>
+              <Link
+                href="/api/login"
+                className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+              >
+                Login
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </nav>

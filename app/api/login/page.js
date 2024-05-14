@@ -12,17 +12,20 @@ export default function LoginPage() {
 
   const router = useRouter();
   const { status } = useSession();
-
+  console.log(status);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const res = await signIn("credentials", {
-      Email: email,
-      Password: password,
+      username: email,
+      password: password,
       redirect: false,
       callbackUrl: "/",
     });
     console.log(res);
-    if (status === "authenticated") {
+    if (res.error) {
+      console.log("INvalid credentials");
+    }
+    if (!res.error) {
       router.push("/");
     }
   };
@@ -51,13 +54,13 @@ export default function LoginPage() {
               >
                 <div>
                   <label
-                    for="email"
+                    // for="email"
                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
                     E-mail
                   </label>
                   <input
-                    type="email"
+                    // type="email"
                     name="email"
                     id="email"
                     value={email}
