@@ -3,7 +3,7 @@ import { NextRequest } from "next/server";
 import { useSession } from "next-auth/react";
 
 export function middleware(request) {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const path = request.nextUrl.pathname;
 
   const isPublicPath = path === "/api/login" || path === "/api/register";
