@@ -11,13 +11,13 @@ export default function LoginPage() {
   const [error, setError] = useState("");
 
   const router = useRouter();
-  const { status } = useSession();
-  console.log(status);
+  const { data: session, status } = useSession();
+  console.log(session);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const res = await signIn("credentials", {
-      username: email,
-      password: password,
+      Email: email,
+      Password: password,
       redirect: false,
       callbackUrl: "/",
     });
@@ -26,7 +26,7 @@ export default function LoginPage() {
       console.log("INvalid credentials");
     }
     if (!res.error) {
-      router.push("/");
+      router.push("/card");
     }
   };
 

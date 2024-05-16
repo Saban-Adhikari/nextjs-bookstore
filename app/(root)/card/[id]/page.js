@@ -1,3 +1,4 @@
+import ShareThis from "@/app/components/ShareThis";
 import Image from "next/image";
 
 export const generateMetadata = async ({ params }) => {
@@ -28,11 +29,14 @@ export const generateMetadata = async ({ params }) => {
 
 export const singleData = async (dataform) => {
   try {
-    const response = await fetch(`https://htdrnl.cyclic.app/api/book`, {
-      method: "POST",
-      body: JSON.stringify(dataform),
-      headers: { "Content-Type": "application/json" },
-    });
+    const response = await fetch(
+      `https://bookappserver-1749.onrender.com/api/book`,
+      {
+        method: "POST",
+        body: JSON.stringify(dataform),
+        headers: { "Content-Type": "application/json" },
+      }
+    );
     return response.json();
   } catch (error) {
     console.log("error fetching data: ", error);
@@ -59,6 +63,11 @@ export default async function Page({ params }) {
         padding: "2rem",
       }}
     >
+      <ShareThis
+        image={bookData.Image.url}
+        description={bookData.Description}
+        title={bookData.BookName}
+      />
       <div
         className="max-w-3xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden"
         style={{ maxWidth: "800px" }}

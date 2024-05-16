@@ -8,13 +8,16 @@ const Categories = ({ onGenreChange, onStatusChange }) => {
 
   const fetchGenreData = async () => {
     try {
-      const response = await fetch("https://htdrnl.cyclic.app/api/genre", {
-        method: "POST",
-        body: JSON.stringify({
-          FLAG: "S",
-        }),
-        headers: { "Content-Type": "application/json" },
-      });
+      const response = await fetch(
+        "https://bookappserver-1749.onrender.com/api/genre",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            FLAG: "S",
+          }),
+          headers: { "Content-Type": "application/json" },
+        }
+      );
       const data = await response.json();
       setGenreList(data);
     } catch (error) {

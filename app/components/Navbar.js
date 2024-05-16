@@ -6,13 +6,11 @@ import { signOut, useSession } from "next-auth/react";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { data: Session, status } = useSession();
+  const { data: session, status } = useSession();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
-
-  console.log(status, "session: ", Session);
 
   return (
     <nav className="bg-gray-800">
@@ -40,13 +38,26 @@ const Navbar = () => {
                     Logout
                   </button>
                   {status && status == "authenticated" ? (
-                    <img
-                      className="bg-white rounded-full"
-                      src={Session?.user?.image}
-                      alt="profile"
-                      height={30}
-                      width={30}
-                    />
+                    <>
+                      <div className="flex flex-col items-center p-1">
+                        <img
+                          className="bg-white rounded-full mb-2"
+                          src={session.user.Login[0].Profile}
+                          alt="profile"
+                          height={30}
+                          width={30}
+                        />
+                        <p
+                          style={{
+                            color: "black",
+                            backgroundColor: "white",
+                            padding: "2px",
+                          }}
+                        >
+                          {session.user.Login[0].Name}
+                        </p>
+                      </div>
+                    </>
                   ) : (
                     ""
                   )}

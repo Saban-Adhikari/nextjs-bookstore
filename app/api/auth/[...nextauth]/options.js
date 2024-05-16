@@ -8,20 +8,23 @@ export const authOptions = {
     CredentialsProvider({
       type: "credentials",
       credentials: {
-        username: { label: "Email", type: "text", placeholder: "Email" },
-        password: { label: "Password", type: "password" },
+        Email: { label: "Email", type: "text", placeholder: "Email" },
+        Password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
         try {
           const requestBody = {
-            username: credentials?.username,
-            password: credentials?.password,
+            Email: credentials?.Email,
+            Password: credentials?.Password,
           };
-          const res = await fetch(`https://dummyjson.com/auth/login`, {
-            method: "POST",
-            body: JSON.stringify(requestBody),
-            headers: { "Content-Type": "application/json" },
-          });
+          const res = await fetch(
+            `https://bookappserver-1749.onrender.com/api/login`,
+            {
+              method: "POST",
+              body: JSON.stringify(requestBody),
+              headers: { "Content-Type": "application/json" },
+            }
+          );
           console.log("res", res.ok);
           if (!res.ok) {
             const errorResponse = await res.json();
@@ -39,7 +42,9 @@ export const authOptions = {
       },
     }),
   ],
-  pages: {},
+  pages: {
+    signIn: "/login",
+  },
   callbacks: {
     async jwt({ token, user }) {
       return { ...token, ...user };

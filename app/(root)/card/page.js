@@ -16,9 +16,10 @@ const Page = () => {
   const fetchData = async (genre, status) => {
     try {
       const response = await fetch(
-        `https://htdrnl.cyclic.app/api/getBook?UserID=-1&Status=${status}&Genres=${genre}`
+        `https://bookappserver-1749.onrender.com/api/getBook?UserID=-1&Status=${status}&Genres=${genre}`
       );
       const data = await response.json();
+      console.log("fetched book,", data);
       setBooks(data.Values);
     } catch (error) {
       console.error("Error fetching data:", error);
