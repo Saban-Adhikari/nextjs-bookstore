@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-export const fetchedData = () => {
+export const FetchedData = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
