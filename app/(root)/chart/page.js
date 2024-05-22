@@ -64,11 +64,12 @@ const ForexGraph = () => {
     setSelectedCurrency(selectedOption);
   };
 
-  const options = [
-    ...new Set(
-      rates.map((rate) => ({ value: rate.currency, label: rate.currency }))
-    ),
-  ];
+  const options = [...new Set(rates.map((rate) => rate.currency))].map(
+    (currency) => ({
+      value: currency,
+      label: currency,
+    })
+  );
 
   const data = {
     labels: historicalData.map((dataPoint) => dataPoint.date),
