@@ -1,125 +1,195 @@
 "use client";
-import { useState, useEffect } from "react";
-import axios from "axios";
+
+import React, { useState, useEffect } from "react";
+
+const fetchForexData = async () => {
+  try {
+    const response = await fetch(
+      "https://backend-calendar.onlinekhabar.com/api/v1/forex"
+    );
+    const forexData = await response.json();
+    return forexData.data[0].rates;
+  } catch (error) {
+    console.error("Error fetching forex data:", error);
+    return [];
+  }
+};
 
 const ForexCalculator = () => {
+  const [rates, setRates] = useState([]);
+  const [baseAmount, setBaseAmount] = useState(1);
+  const [targetAmount, setTargetAmount] = useState(0);
   const [baseCurrency, setBaseCurrency] = useState("USD");
   const [targetCurrency, setTargetCurrency] = useState("NPR");
-  const [amountBase, setAmountBase] = useState(1);
-  const [amountTarget, setAmountTarget] = useState(0);
-  const [conversionRates, setConversionRates] = useState({});
 
   useEffect(() => {
-    const fetchRates = async () => {
-      try {
-        const response = await axios.get(
-          `https://v6.exchangerate-api.com/v6/c6959b437a74f12a7446f5c0/latest/${baseCurrency}`
-        );
-        setConversionRates(response.data.conversion_rates);
-        setAmountTarget(
-          (1 * response.data.conversion_rates[targetCurrency]).toFixed(2)
-        );
-      } catch (error) {
-        console.error("Error fetching conversion rates:", error);
-      }
-    };
-    fetchRates();
-  }, [baseCurrency, targetCurrency]);
+    const getRates = async () => {
+      const ratesData = await fetchForexData();
 
-  const handleBaseAmountChange = (e) => {
-    const value = e.target.value;
-    setAmountBase(value);
-    if (conversionRates[targetCurrency]) {
-      setAmountTarget((value * conversionRates[targetCurrency]).toFixed(2));
+      const nepaleseCurrency = [
+        {
+          id: 0,
+          currency_code: "NPR",
+          currency_title: "Nepalese Rupee",
+          thumbnail: "https://flagcdn.com/np.svg",
+          unit: "1",
+          buy: "1.0",
+          sell: "1.0",
+        },
+      ];
+
+      const combinedRates = [...ratesData, ...nepaleseCurrency];
+      setRates(combinedRates);
+      calculateTargetAmount(1, "USD", "NPR", combinedRates); // Initial calculation
+    };
+    getRates();
+  }, []);
+
+  const calculateTargetAmount = (amount, base, target, ratesData) => {
+    const baseRate = ratesData.find((rate) => rate.currency_code === base);
+    const targetRate = ratesData.find((rate) => rate.currency_code === target);
+    if (baseRate && targetRate) {
+      const totalBaseAmount =
+        parseFloat(baseRate.buy) / parseFloat(baseRate.unit);
+      const totalTargetAmount =
+        parseFloat(targetRate.buy) / parseFloat(targetRate.unit);
+      const convertedAmount = (amount * totalBaseAmount) / totalTargetAmount;
+      setTargetAmount(convertedAmount.toFixed(2));
     }
   };
 
+  const handleBaseAmountChange = (e) => {
+    const amount = e.target.value;
+    setBaseAmount(amount);
+    calculateTargetAmount(amount, baseCurrency, targetCurrency, rates);
+  };
+
   const handleTargetAmountChange = (e) => {
-    const value = e.target.value;
-    setAmountTarget(value);
-    if (conversionRates[targetCurrency]) {
-      setAmountBase((value / conversionRates[targetCurrency]).toFixed(2));
+    const amount = e.target.value;
+    setTargetAmount(amount);
+    const baseRate = rates.find((rate) => rate.currency_code === baseCurrency);
+    const targetRate = rates.find(
+      (rate) => rate.currency_code === targetCurrency
+    );
+    if (baseRate && targetRate) {
+      const convertedAmount =
+        (amount * parseFloat(targetRate.buy)) / parseFloat(baseRate.buy);
+      setBaseAmount(convertedAmount.toFixed(2));
     }
   };
 
   const handleBaseCurrencyChange = (e) => {
     setBaseCurrency(e.target.value);
+    calculateTargetAmount(baseAmount, e.target.value, targetCurrency, rates);
   };
 
   const handleTargetCurrencyChange = (e) => {
     setTargetCurrency(e.target.value);
+    calculateTargetAmount(baseAmount, baseCurrency, e.target.value, rates);
+  };
+
+  const getThumbnail = (currencyCode) => {
+    const rate = rates.find((rate) => rate.currency_code === currencyCode);
+    return rate ? rate.thumbnail : "";
   };
 
   return (
-    <div className="flex justify-center p-4 m-14 w-full">
-      <div className="container bg-white p-6 m-16 rounded-lg shadow-lg max-w-md">
-        <h1 className="text-3xl font-bold mb-6 text-center text-blue-600">
-          Forex Calculator
-        </h1>
-        <div className="flex mb-6">
-          <div className="w-1/2 pr-2">
-            <label className="block mb-2 font-medium text-gray-700">
-              Amount:
-            </label>
-            <input
-              type="number"
-              className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:border-blue-500"
-              value={amountBase}
-              onChange={handleBaseAmountChange}
+    <div
+      className="forex-calculator"
+      style={{
+        maxWidth: "600px",
+        marginTop: "200px",
+        marginBottom: "250px",
+        marginLeft: "500px",
+        padding: "30px",
+        border: "1px solid #ddd",
+        borderRadius: "8px",
+        backgroundColor: "#f9f9f9",
+      }}
+    >
+      <h1>Forex Calculator</h1>
+      <div className="forex-input-group" style={{ marginBottom: "20px" }}>
+        <label style={{ display: "block", marginBottom: "5px" }}>Amount</label>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <input
+            type="number"
+            value={baseAmount}
+            onChange={handleBaseAmountChange}
+            style={{
+              flex: "1",
+              marginRight: "10px",
+              padding: "10px",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+            }}
+          />
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <img
+              src={getThumbnail(baseCurrency)}
+              alt={baseCurrency}
+              style={{ width: "20px", height: "14px", marginRight: "10px" }}
             />
-          </div>
-          <div className="w-1/2 pl-2">
-            <label className="block mb-2 font-medium text-gray-700">
-              Base Currency:
-            </label>
             <select
-              className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:border-blue-500"
               value={baseCurrency}
               onChange={handleBaseCurrencyChange}
+              style={{
+                padding: "10px",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+              }}
             >
-              {Object.keys(conversionRates).map((currency) => (
-                <option key={currency} value={currency}>
-                  {currency}
-                </option>
-              ))}
+              {rates
+                .filter((rate) => rate.currency_code !== targetCurrency)
+                .map((rate) => (
+                  <option key={rate.id} value={rate.currency_code}>
+                    {rate.currency_title}
+                  </option>
+                ))}
             </select>
           </div>
         </div>
-        <div className="flex mb-6">
-          <div className="w-1/2 pr-2">
-            <label className="block mb-2 font-medium text-gray-700">
-              Amount:
-            </label>
-            <input
-              type="number"
-              className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:border-blue-500"
-              value={amountTarget}
-              onChange={handleTargetAmountChange}
+      </div>
+      <div className="forex-input-group" style={{ marginBottom: "20px" }}>
+        <label style={{ display: "block", marginBottom: "5px" }}>
+          Converted to
+        </label>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <input
+            type="number"
+            value={targetAmount}
+            onChange={handleTargetAmountChange}
+            style={{
+              flex: "1",
+              marginRight: "10px",
+              padding: "10px",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+            }}
+          />
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <img
+              src={getThumbnail(targetCurrency)}
+              alt={targetCurrency}
+              style={{ width: "20px", height: "14px", marginRight: "10px" }}
             />
-          </div>
-          <div className="w-1/2 pl-2">
-            <label className="block mb-2 font-medium text-gray-700">
-              Target Currency:
-            </label>
             <select
-              className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:border-blue-500"
               value={targetCurrency}
               onChange={handleTargetCurrencyChange}
+              style={{
+                padding: "10px",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+              }}
             >
-              {Object.keys(conversionRates).map((currency) => (
-                <option key={currency} value={currency}>
-                  {currency}
-                </option>
-              ))}
+              {rates
+                .filter((rate) => rate.currency_code !== baseCurrency)
+                .map((rate) => (
+                  <option key={rate.id} value={rate.currency_code}>
+                    {rate.currency_title}
+                  </option>
+                ))}
             </select>
           </div>
-        </div>
-        <div className="bg-blue-100 p-4 mt-6 rounded text-center">
-          <h2 className="text-2xl font-bold text-blue-600">Exchange Rate:</h2>
-          <p className="text-xl">
-            1 {baseCurrency} = {conversionRates[targetCurrency]?.toFixed(2)}{" "}
-            {targetCurrency}
-          </p>
         </div>
       </div>
     </div>
